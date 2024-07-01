@@ -2,4 +2,4 @@
 Solar powered environmental IoT sensor based on an ESP32
 
 Coming soon...
-![3D View](https://github.com/patsaoglou/S-NODE-1/assets/93339707/e82c5403-5616-47ef-abb5-9ce5742f244f)
+![3D VIEW](https://github.com/patsaoglou/S-NODE-1/assets/93339707/714b6058-ae9d-4d57-9fbe-781d05d133d9)
