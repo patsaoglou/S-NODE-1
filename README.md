@@ -111,7 +111,7 @@ I used the server to check if the firmware was reliable (if i had any measuremnt
 
 As you see below charging works like a treat saving around 200mW during sun hours and no 1-minute measurements POST is missed. But we have a big issue I have to address. Can you see it in the table?
 
-<img src="./Resources/sql.jpg" width="600">
+<img src="./Resources/sql.JPG" width="600">
 
 Clearly temperature in sun hours increases the node's sensor temperature which is WAY OFF. This is a big design miscalculation I haven't thought of, and i don't know of any solution other than a proper casing. Still I don't think this will solve the issue but i have some tiny hope.
 
