@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Last Measurement of Device 1</title>
+
+    <!-- Moment.js for date handling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <!-- Chart.js with Moment.js adapter -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #E0E0E0;
+            margin: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table, th, td {
+            border: 1px solid #333;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1f1f1f;
+        }
+
+        td {
+            background-color: #2b2b2b;
+        }
+
+        #chartContainer, #chartContainer2 {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+
+        h1 {
+            color: #FFF;
+        }
+    </style>
+</head>
+<body>
+    <h1>Last Measurement for Device 1</h1>
+
+    <table>
+        <tr>
+            <th>Temperature</th>
+            <td id="temp_value">Loading...</td>
+        </tr>
+        <tr>
+            <th>Humidity</th>
+            <td id="humid_value">Loading...</td>
+        </tr>
+        <tr>
+            <th>Pressure</th>
+            <td id="pressure_value">Loading...</td>
+        </tr>
+        <tr>
+            <th>Battery Voltage</th>
+            <td id="battery_value">Loading...</td>
+        </tr>
+        <tr>
+            <th>Solar Voltage</th>
+            <td id="solar_voltage_value">Loading...</td>
+        </tr>
+        <tr>
+            <th>Solar Current</th>
+            <td id="solar_current_value">Loading...</td>
+        </tr>
+        <tr>
+            <th>WiFi Signal Strength</th>
+            <td id="wifi_value">Loading...</td>
+        </tr>
+        <tr>
+            <th>Timestamp</th>
+            <td id="timestamp_value">Loading...</td>
+        </tr>
+    </table>
+
+    <!-- First chart for temperature, humidity, and pressure -->
+    <div id="chartContainer">
+        <canvas id="measurementChart"></canvas>
+    </div>
+
+    <!-- Second chart for battery voltage, solar voltage, and solar current -->
+    <div id="chartContainer2">
+        <canvas id="voltageChart"></canvas>
+    </div>
+
+    <script>
+        let lastTimestamp = null; // Track the last timestamp
+
+        // First Chart: Temperature, Humidity, Pressure
+        const ctx = document.getElementById('measurementChart').getContext('2d');
+        const measurementChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],  // Timestamps
+                datasets: [
+                    {
+                        label: 'Temperature (°C)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        data: []
+                    },
+                    {
+                        label: 'Humidity (%)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        data: []
+                    },
+                    {
+                        label: 'Pressure (kPa)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        data: []
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'minute',
+                            tooltipFormat: 'YYYY-MM-DD HH:mm',
+                            displayFormats: {
+                                minute: 'HH:mm'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Timestamp',
+                            color: '#FFF'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#FFF'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#FFF'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Second Chart: Voltage and Solar Data
+        const ctx2 = document.getElementById('voltageChart').getContext('2d');
+        const voltageChart = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: [],  // Timestamps
+                datasets: [
+                    {
+                        label: 'Battery Voltage (V)',
+                        borderColor: 'rgba(255, 205, 86, 1)',
+                        backgroundColor: 'rgba(255, 205, 86, 0.2)',
+                        data: []
+                    },
+                    {
+                        label: 'Solar Voltage (V)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                        data: []
+                    },
+                    {
+                        label: 'Solar Current (mA)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        data: []
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'minute',
+                            tooltipFormat: 'YYYY-MM-DD HH:mm',
+                            displayFormats: {
+                                minute: 'HH:mm'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Timestamp',
+                            color: '#FFF'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#FFF'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#FFF'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Function to fetch the latest measurement and update the charts
+        function fetchLatestMeasurement() {
+            fetch('/device/1/last_measurement_json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        console.error(data.error);
+                        return;
+                    }
+
+                    // Check if the timestamp is new before updating the chart
+                    if (lastTimestamp !== data.timestamp) {
+                        lastTimestamp = data.timestamp; // Update the last timestamp
+
+                        // Update table with the latest values
+                        document.getElementById('temp_value').textContent = data.temp + ' °C';
+                        document.getElementById('humid_value').textContent = data.humid + ' %';
+                        document.getElementById('pressure_value').textContent = (data.pressure / 100) + ' h Pa';
+                        document.getElementById('battery_value').textContent = data.battery_voltage + ' V';
+                        document.getElementById('solar_voltage_value').textContent = data.solar_voltage + ' V';
+                        document.getElementById('solar_current_value').textContent = data.solar_current + ' mA';
+                        document.getElementById('wifi_value').textContent = data.wifi_signal_strength + ' dBm';
+                        document.getElementById('timestamp_value').textContent = data.timestamp;
+
+                        // Update the first chart (Temperature, Humidity, Pressure)
+                        measurementChart.data.labels.push(data.timestamp); // Add new timestamp
+                        measurementChart.data.datasets[0].data.push(data.temp);  // Add new temperature
+                        measurementChart.data.datasets[1].data.push(data.humid); // Add new humidity
+                        measurementChart.data.datasets[2].data.push(data.pressure / 100); // Add new pressure
+
+                        measurementChart.update(); // Update the first chart
+
+                        // Update the second chart (Battery Voltage, Solar Voltage, Solar Current)
+                        voltageChart.data.labels.push(data.timestamp); // Add new timestamp
+                        voltageChart.data.datasets[0].data.push(data.battery_voltage);  // Add new battery voltage
+                        voltageChart.data.datasets[1].data.push(data.solar_voltage);  // Add new solar voltage
+                        voltageChart.data.datasets[2].data.push(data.solar_current);  // Add new solar current
+
+                        voltageChart.update(); // Update the second chart
+                    }
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        }
+
+        // Fetch data every 5 seconds
+        setInterval(fetchLatestMeasurement, 5000);
+        // Fetch immediately on load
+        fetchLatestMeasurement();
+    </script>
+</body>
+</html
