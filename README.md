@@ -89,7 +89,7 @@ In this section we are going to cover some important notes of the power harverst
 - Energy (Wh) =  2851J / 3600s = 0.791 (Wh)
 
 From the measurements saved in the table in MySQL we can see that in a good day we are charging for at least 4hours on 2.8V and 80mA.
-- Calculate energy harvested: E = 0.224W × 4h × 60min × 60s = 3.225J
+- Calculate energy harvested: E = 0.224W × 4h × 60min × 60s = 3225J
 - Energy (Wh) =  2851J / 3600s = 0.896 (Wh)
 
 As you can see from the calculations above on these 4 hours we harvest a bit more energy than we consume the hole day with 1-minute interval. Still I have not taken into account moments where we still harvest energy but not with peak power, but still there can be a case which is not very sunny and we don't get that kind of peak power so we are quite even.
