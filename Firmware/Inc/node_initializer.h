@@ -27,10 +27,14 @@
 #define INITIALIZER_AP_UP_TIME  5
 #define DEFAULT_SLEEP_DURATION  15
 
-#define MAX_CONNECT_TRIES       3
+#define MAX_CONNECT_TRIES       2
 
 #define SETUP_LED  GPIO_NUM_11
 #define SETUP_GPIO GPIO_NUM_9  
+
+#define API_FIELD_SIZE  128
+#define SSID_SIZE       32
+#define PW_SIZE         64
 
 extern char *html_form;
 
@@ -38,15 +42,15 @@ typedef uint8_t config_state;
 
 typedef struct 
 {
-    char api_post_ep[128];
-    char api_key[128];
+    char api_post_ep[API_FIELD_SIZE];
+    char api_key[API_FIELD_SIZE];
     uint8_t server_type;
 }server_configuration;
 
 typedef struct 
 {
-    char ap_ssid[32];
-    char ap_password[32];
+    char ap_ssid[SSID_SIZE];
+    char ap_password[PW_SIZE];
 }wifi_conn_config;
 
 typedef struct 

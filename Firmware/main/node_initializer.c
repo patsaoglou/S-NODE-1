@@ -215,17 +215,29 @@ esp_err_t get_credenctials_and_connect(httpd_req_t *req){
     api_post_ep_json = cJSON_GetObjectItemCaseSensitive(json, "api_post_ep");
     api_key_json = cJSON_GetObjectItemCaseSensitive(json, "api_key");
         
-    if (!cJSON_IsString(ssid_json) || !cJSON_IsString(password_json) || !cJSON_IsString(api_post_ep_json) || !cJSON_IsString(api_key_json)) {
-        httpd_resp_send(req, "Invalid data type field", HTTPD_RESP_USE_STRLEN);
+    // Validate fields
+    if (!cJSON_IsString(ssid_json) || !cJSON_IsString(password_json) || 
+            !cJSON_IsString(api_post_ep_json) || !cJSON_IsString(api_key_json)) {
+        httpd_resp_send(req, "Invalid data type fields", HTTPD_RESP_USE_STRLEN);
 
         cJSON_Delete(json);
         return ESP_FAIL;
     }
 
-    strcpy(initializer->wifi_config.ap_ssid, ssid_json->valuestring);
-    strcpy(initializer->wifi_config.ap_password, password_json->valuestring);
-    strcpy(initializer->server_config.api_post_ep, api_post_ep_json->valuestring);
-    strcpy(initializer->server_config.api_key, api_key_json->valuestring);
+    // Check string length and respond with length issue if user prompted something
+    if (strlen(ssid_json->valuestring) > SSID_SIZE || strlen(password_json->valuestring) > PW_SIZE || 
+            strlen(api_post_ep_json->valuestring) > API_FIELD_SIZE || strlen(api_key_json->valuestring) > API_FIELD_SIZE) {
+        httpd_resp_send(req, "Field entered out of range. Max API related length 128/ SSID 32/ password 64", HTTPD_RESP_USE_STRLEN);
+
+        cJSON_Delete(json);
+        return ESP_FAIL;
+    }
+
+    strncpy(initializer->wifi_config.ap_ssid, ssid_json->valuestring, SSID_SIZE);
+    strncpy(initializer->wifi_config.ap_password, password_json->valuestring, PW_SIZE);
+    strncpy(initializer->server_config.api_post_ep, api_post_ep_json->valuestring, API_FIELD_SIZE);
+    strncpy(initializer->server_config.api_key, api_key_json->valuestring, API_FIELD_SIZE);
+
 
     httpd_resp_send(req, "Connecting to Wi-Fi...", HTTPD_RESP_USE_STRLEN);
     initializer->initializer_status = CONNECT_TRIGGERED; 
@@ -240,9 +252,11 @@ config_state connect_to_ap(initializer_struct *initializer){
    
     wifi_config_t wifi_configuration = {0};
     ESP_LOGI("connect_to_ap", "Setting up wifi sta config to wifi_start and connect.");
-
+    
+    //  This copy is within predefined size fields and ESP API structures is length safe here
     strcpy((char*)wifi_configuration.sta.ssid, initializer->wifi_config.ap_ssid);
     strcpy((char*)wifi_configuration.sta.password, initializer->wifi_config.ap_password);    
+    
     esp_wifi_set_mode(WIFI_MODE_STA);
     esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_configuration);
     esp_wifi_start();
