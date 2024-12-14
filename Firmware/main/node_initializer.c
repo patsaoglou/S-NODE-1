@@ -109,7 +109,7 @@ void initialize_node_as_ap(initializer_struct *initializer){
         }
     };
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
-    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &ap_config));
+    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_AP, &ap_config));
     ESP_ERROR_CHECK(esp_wifi_start());
 }
 
